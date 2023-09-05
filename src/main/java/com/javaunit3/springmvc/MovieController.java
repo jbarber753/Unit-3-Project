@@ -53,6 +53,20 @@ public class MovieController {
 
         return "bestMovie";
     }
+
+    @RequestMapping("/voteForTheBestMovieForm")
+    public String voteForTheBestMovieForm(Model model){
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+
+        List<MovieEntity> movieEntityList = session.createQuery("from MovieEntity").list();
+
+        session.getTransaction().commit();
+        model.addAttribute("movies", movieEntityList);
+
+        return "voteForTheBestMovie";
+    }
+
     @RequestMapping("/voteForTheBestMovie")
     public String voteForTheBestMovie(HttpServletRequest request, Model model)
     {
@@ -74,8 +88,28 @@ public class MovieController {
 
         return "voteForTheBestMovie";
     }
+
+    @RequestMapping("/addMovieForm")
+    public String addMovieForm(){
+        return "addMovie";
+    }
+
     @RequestMapping("/addMovie")
-    public String addMovieForm() {
+    public String addMovie(HttpServletRequest request) {
+        String moveTitle = request.getParameter("movieTitle");
+        String maturityRating = request.getParameter("maturityRating");
+        String genre = request.getParameter("genre");
+
+        MovieEntity movieEntity = new MovieEntity();
+        movieEntity.setTitle(moveTitle);
+        movieEntity.setMaturityRating(maturityRating);
+        movieEntity.setGenre(genre);
+
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        session.save(movieEntity);
+        session.getTransaction().commit();
+
         return "addMovie";
     }
 }
